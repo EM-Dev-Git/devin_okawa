@@ -382,7 +382,7 @@
         // フォーム送信処理
         document.getElementById('file-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            submitForm('./upload-transcription/', new FormData(this));
+            submitForm('upload-transcription/', new FormData(this));
         });
         
         document.getElementById('text-form').addEventListener('submit', function(e) {
@@ -392,7 +392,7 @@
             formData.append('meeting_title', document.getElementById('text-meeting-title').value);
             formData.append('meeting_date', document.getElementById('text-meeting-date').value);
             formData.append('output_format', document.getElementById('text-output-format').value);
-            submitForm('./generate-minutes/', formData);
+            submitForm('generate-minutes/', formData);
         });
         
         // API送信処理
