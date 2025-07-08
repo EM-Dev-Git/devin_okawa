@@ -401,7 +401,12 @@
             hideResult();
             
             try {
-                const response = await fetch(endpoint, {
+                // 認証情報を含まないクリーンなURLを構築
+                const cleanUrl = window.location.protocol + '//' + window.location.hostname + 
+                    (window.location.port ? ':' + window.location.port : '') + 
+                    '/' + endpoint;
+                
+                const response = await fetch(cleanUrl, {
                     method: 'POST',
                     body: formData
                 });
