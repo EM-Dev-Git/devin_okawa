@@ -1,6 +1,7 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.templating import Jinja2Templates
 from typing import Optional
 import os
 import tempfile
@@ -23,13 +24,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+templates = Jinja2Templates(directory="templates")
+
 parser = TranscriptionParser()
 preprocessor = TranscriptionPreprocessor()
 generator = MinutesGenerator()
 formatter = MinutesFormatter()
 
-@app.get("/")
-async def root():
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/api/info")
+async def api_info():
     return {"message": "議事録生成システムAPI", "version": "1.0.0"}
 
 @app.post("/upload-transcription/")
