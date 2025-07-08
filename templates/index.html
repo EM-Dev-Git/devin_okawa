@@ -277,6 +277,7 @@
                         <select id="file-output-format" name="output_format">
                             <option value="html">HTML</option>
                             <option value="markdown">Markdown</option>
+                            <option value="json">JSON</option>
                             <option value="pdf">PDF</option>
                         </select>
                     </div>
@@ -308,6 +309,7 @@
                         <select id="text-output-format" name="output_format">
                             <option value="html">HTML</option>
                             <option value="markdown">Markdown</option>
+                            <option value="json">JSON</option>
                             <option value="pdf">PDF</option>
                         </select>
                     </div>
@@ -405,8 +407,26 @@
                 });
                 
                 if (response.ok) {
-                    const result = await response.text();
-                    showResult(result, false);
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (contentType && contentType.includes('application/json')) {
+                        // JSON レスポンスの場合
+                        const jsonResult = await response.json();
+                        if (jsonResult.format === 'json') {
+                            // JSON形式で出力する場合は整形して表示
+                            const formattedJson = JSON.stringify(jsonResult.content, null, 2);
+                            showResult(`<pre><code>${formattedJson}</code></pre>`, false);
+                        } else if (jsonResult.format === 'markdown') {
+                            // Markdown形式の場合はテキストとして表示
+                            showResult(`<pre>${jsonResult.content}</pre>`, false);
+                        } else {
+                            showResult(JSON.stringify(jsonResult, null, 2), false);
+                        }
+                    } else {
+                        // HTML レスポンスの場合
+                        const result = await response.text();
+                        showResult(result, false);
+                    }
                 } else {
                     const errorText = await response.text();
                     showResult(`エラーが発生しました: ${errorText}`, true);

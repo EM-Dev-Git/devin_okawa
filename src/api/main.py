@@ -72,6 +72,8 @@ async def upload_transcription(
         elif output_format.lower() == "markdown":
             content = formatter.format_to_markdown(minutes_data)
             return {"content": content, "format": "markdown"}
+        elif output_format.lower() == "json":
+            return {"content": minutes_data, "format": "json"}
         elif output_format.lower() == "pdf":
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
                 formatter.format_to_pdf(minutes_data, tmp_file.name)
@@ -113,6 +115,8 @@ async def generate_minutes_from_text(
         elif output_format.lower() == "markdown":
             content = formatter.format_to_markdown(minutes_data)
             return {"content": content, "format": "markdown"}
+        elif output_format.lower() == "json":
+            return {"content": minutes_data, "format": "json"}
         else:
             return minutes_data
     
