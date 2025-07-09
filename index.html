@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Editor - VSCode Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #cccccc;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #252526;
+            border-right: 1px solid #3c3c3c;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 10px;
+            background-color: #2d2d30;
+            border-bottom: 1px solid #3c3c3c;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .file-explorer {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .file-item {
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+
+        .file-item:hover {
+            background-color: #2a2d2e;
+        }
+
+        .file-item.active {
+            background-color: #094771;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-bar {
+            background-color: #2d2d30;
+            border-bottom: 1px solid #3c3c3c;
+            display: flex;
+            align-items: center;
+            min-height: 35px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background-color: #2d2d30;
+            border-right: 1px solid #3c3c3c;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab.active {
+            background-color: #1e1e1e;
+            border-bottom: 2px solid #007acc;
+        }
+
+        .tab-close {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .tab-close:hover {
+            opacity: 1;
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+        }
+
+        .status-bar {
+            background-color: #007acc;
+            color: white;
+            padding: 4px 10px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar {
+            background-color: #2d2d30;
+            border-bottom: 1px solid #3c3c3c;
+            padding: 8px 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn:hover {
+            background-color: #1177bb;
+        }
+
+        .btn-secondary {
+            background-color: #3c3c3c;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4c4c4c;
+        }
+
+        .prompt-templates {
+            margin-top: 20px;
+        }
+
+        .template-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 2px;
+            font-size: 12px;
+            color: #9cdcfe;
+        }
+
+        .template-item:hover {
+            background-color: #2a2d2e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                📝 Prompt Editor
+            </div>
+            <div class="file-explorer">
+                <div class="file-item active" onclick="openFile('new-prompt.txt')">
+                    📄 new-prompt.txt
+                </div>
+                <div class="file-item" onclick="openFile('system-prompt.txt')">
+                    ⚙️ system-prompt.txt
+                </div>
+                <div class="file-item" onclick="openFile('user-prompt.txt')">
+                    👤 user-prompt.txt
+                </div>
+                
+                <div class="prompt-templates">
+                    <div style="font-weight: bold; margin-bottom: 10px; font-size: 12px; color: #cccccc;">テンプレート</div>
+                    <div class="template-item" onclick="loadTemplate('coding')">
+                        💻 コーディング支援
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('analysis')">
+                        📊 データ分析
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('creative')">
+                        🎨 創作支援
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('translation')">
+                        🌐 翻訳
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('explanation')">
+                        📚 説明・解説
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="tab-bar">
+                <div class="tab active">
+                    <span>📄</span>
+                    <span id="current-tab-name">new-prompt.txt</span>
+                    <span class="tab-close">×</span>
+                </div>
+            </div>
+            
+            <div class="toolbar">
+                <button class="btn" onclick="savePrompt()">💾 保存</button>
+                <button class="btn btn-secondary" onclick="copyPrompt()">📋 コピー</button>
+                <button class="btn btn-secondary" onclick="clearEditor()">🗑️ クリア</button>
+                <button class="btn btn-secondary" onclick="toggleWordWrap()">📝 折り返し</button>
+                <span style="margin-left: auto; font-size: 12px;">
+                    文字数: <span id="char-count">0</span>
+                </span>
+            </div>
+            
+            <div class="editor-container">
+                <div id="editor"></div>
+            </div>
+            
+            <div class="status-bar">
+                <span>Ready</span>
+                <span>UTF-8 | LF | Plain Text</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <script>
+        let editor;
+        let currentFile = 'new-prompt.txt';
+        let files = {
+            'new-prompt.txt': '',
+            'system-prompt.txt': '',
+            'user-prompt.txt': ''
+        };
+
+        // Monaco Editorの初期化
+        require.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.44.0/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: '',
+                language: 'plaintext',
+                theme: 'vs-dark',
+                fontSize: 14,
+                lineNumbers: 'on',
+                wordWrap: 'on',
+                minimap: { enabled: true },
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                tabSize: 2,
+                insertSpaces: true
+            });
+
+            // 文字数カウントの更新
+            editor.onDidChangeModelContent(() => {
+                updateCharCount();
+                updateStatus('編集中...');
+            });
+
+            updateCharCount();
+        });
+
+        function updateCharCount() {
+            if (editor) {
+                const content = editor.getValue();
+                document.getElementById('char-count').textContent = content.length;
+            }
+        }
+
+        function updateStatus(message) {
+            document.querySelector('.status-bar span').textContent = message;
+            setTimeout(() => {
+                document.querySelector('.status-bar span').textContent = 'Ready';
+            }, 2000);
+        }
+
+        function openFile(filename) {
+            // ファイルの内容を保存
+            if (editor && currentFile) {
+                files[currentFile] = editor.getValue();
+            }
+
+            // 新しいファイルを開く
+            currentFile = filename;
+            if (editor) {
+                editor.setValue(files[filename] || '');
+            }
+
+            // UIの更新
+            document.getElementById('current-tab-name').textContent = filename;
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            updateStatus(`${filename} を開きました`);
+        }
+
+        function savePrompt() {
+            if (editor) {
+                files[currentFile] = editor.getValue();
+                const content = editor.getValue();
+                
+                // ローカルストレージに保存
+                localStorage.setItem(`prompt_${currentFile}`, content);
+                
+                // ファイルとしてダウンロード
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = currentFile;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                updateStatus('保存しました');
+            }
+        }
+
+        function copyPrompt() {
+            if (editor) {
+                const content = editor.getValue();
+                navigator.clipboard.writeText(content).then(() => {
+                    updateStatus('クリップボードにコピーしました');
+                });
+            }
+        }
+
+        function clearEditor() {
+            if (editor && confirm('内容をクリアしますか？')) {
+                editor.setValue('');
+                updateStatus('内容をクリアしました');
+            }
+        }
+
+        function toggleWordWrap() {
+            if (editor) {
+                const currentWrap = editor.getOption(monaco.editor.EditorOption.wordWrap);
+                const newWrap = currentWrap === 'on' ? 'off' : 'on';
+                editor.updateOptions({ wordWrap: newWrap });
+                updateStatus(`折り返し: ${newWrap === 'on' ? 'ON' : 'OFF'}`);
+            }
+        }
+
+        function loadTemplate(type) {
+            const templates = {
+                coding: `# コーディング支援プロンプト
+
+あなたは経験豊富なソフトウェアエンジニアです。以下の要件に基づいてコードを作成してください。
+
+## 要件
+- プログラミング言語: [言語を指定]
+- 機能: [実装したい機能を記述]
+- 制約条件: [制約があれば記述]
+
+## 期待する出力
+- 動作するコード
+- コメント付きの説明
+- 使用例
+
+## 追加要求
+[その他の要求があれば記述]`,
+
+                analysis: `# データ分析プロンプト
+
+あなたはデータサイエンティストです。以下のデータを分析してください。
+
+## データの概要
+- データソース: [データの出典]
+- データ形式: [CSV, JSON, etc.]
+- データ期間: [分析対象期間]
+
+## 分析目的
+[何を明らかにしたいか記述]
+
+## 期待する分析内容
+- 基本統計量
+- データの可視化
+- 傾向分析
+- 洞察と提案
+
+## 出力形式
+[レポート形式、グラフ、表など希望する形式]`,
+
+                creative: `# 創作支援プロンプト
+
+あなたは創造性豊かなライターです。以下のテーマで創作してください。
+
+## テーマ・ジャンル
+[小説、詩、脚本、記事など]
+
+## 設定・条件
+- 文字数: [目安の文字数]
+- トーン: [明るい、シリアス、ユーモラスなど]
+- ターゲット読者: [想定読者層]
+
+## 内容の方向性
+[書きたい内容の概要や方向性]
+
+## 特別な要求
+[特定のキーワードを含める、特定の構成にするなど]`,
+
+                translation: `# 翻訳プロンプト
+
+以下のテキストを翻訳してください。
+
+## 翻訳設定
+- 原文言語: [元の言語]
+- 翻訳先言語: [翻訳したい言語]
+- 翻訳スタイル: [フォーマル、カジュアル、技術文書など]
+
+## 原文
+[翻訳したいテキストをここに記述]
+
+## 翻訳時の注意点
+- 文脈を考慮した自然な翻訳
+- 専門用語の適切な処理
+- 文化的な違いへの配慮
+
+## 期待する出力
+- 翻訳文
+- 翻訳の根拠や注意点（必要に応じて）`,
+
+                explanation: `# 説明・解説プロンプト
+
+以下のトピックについて分かりやすく説明してください。
+
+## 説明対象
+[説明したいトピック・概念・技術など]
+
+## 対象読者
+[初心者、中級者、専門家など]
+
+## 説明の深さ
+[概要レベル、詳細レベル、専門レベル]
+
+## 説明形式
+- 構造化された説明
+- 具体例を含む
+- 図表の提案（必要に応じて）
+
+## 特別な要求
+[特定の観点から説明、比較対象、実用例など]`
+            };
+
+            if (editor && templates[type]) {
+                editor.setValue(templates[type]);
+                updateStatus(`${type}テンプレートを読み込みました`);
+            }
+        }
+
+        // ページ読み込み時にローカルストレージから復元
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                Object.keys(files).forEach(filename => {
+                    const saved = localStorage.getItem(`prompt_${filename}`);
+                    if (saved) {
+                        files[filename] = saved;
+                    }
+                });
+                
+                if (editor && files[currentFile]) {
+                    editor.setValue(files[currentFile]);
+                }
+            }, 1000);
+        });
+
+        // キーボードショートカット
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 's':
+                        e.preventDefault();
+                        savePrompt();
+                        break;
+                    case 'c':
+                        if (e.shiftKey) {
+                            e.preventDefault();
+                            copyPrompt();
+                        }
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
