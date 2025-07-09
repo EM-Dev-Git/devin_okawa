@@ -213,32 +213,23 @@ def get_processor():
             raise HTTPException(status_code=500, detail=str(e))
     return processor
 
-@app.get("/healthz")
-async def healthz():
-    return {"status": "ok"}
-
-@app.post("/process-transcript", response_model=MeetingMinutes)
-async def process_transcript(request: TranscriptRequest):
-    try:
-        proc = get_processor()
-        return proc.process_transcript(request)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/format-minutes")
-async def format_minutes(minutes: MeetingMinutes):
-    try:
-        formatted_text = formatter.format_to_text(minutes)
-        return {"formatted_minutes": formatted_text}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 @app.post("/generate-minutes")
 async def generate_minutes(request: TranscriptRequest):
+    """
+    朝の進捗報告会のトランスクリプトから議事録を生成する単一エンドポイント
+    
+    Args:
+        request: 会議ヘッダー情報とトランスクリプトを含むリクエスト
+        
+    Returns:
+        formatted_minutes: テキスト形式の議事録
+    """
     try:
         proc = get_processor()
         minutes = proc.process_transcript(request)
+        
         formatted_text = formatter.format_to_text(minutes)
-        return {"formatted_minutes": formatted_text, "structured_data": minutes}
+        
+        return {"formatted_minutes": formatted_text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
