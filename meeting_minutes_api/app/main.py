@@ -16,13 +16,12 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
-# Disable CORS. Do not remove this for full-stack development.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],  # すべてのオリジンを許可
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],  # すべてのメソッドを許可
+    allow_headers=["*"],  # すべてのヘッダーを許可
 )
 
 class MeetingHeader(BaseModel):
@@ -224,7 +223,7 @@ def get_processor():
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
     """
-    Custom Swagger UI endpoint that embeds OpenAPI spec directly to avoid fetch issues
+    認証問題を回避するためOpenAPI仕様を直接埋め込むカスタムSwagger UIエンドポイント
     """
     openapi_schema = app.openapi()
     openapi_json = json.dumps(openapi_schema)
@@ -266,10 +265,10 @@ async def generate_minutes(request: TranscriptRequest):
     """
     朝の進捗報告会のトランスクリプトから議事録を生成する単一エンドポイント
     
-    Args:
+    引数:
         request: 会議ヘッダー情報とトランスクリプトを含むリクエスト
         
-    Returns:
+    戻り値:
         formatted_minutes: テキスト形式の議事録
     """
     try:
