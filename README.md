@@ -25,6 +25,25 @@ A simple FastAPI application following the official "First Steps" tutorial.
 
 - `GET /` - Returns a simple "Hello World" message
 - `GET /health` - Returns application health status
+- `POST /items/` - Create a new item
+- `GET /items/` - Get all items
+
+## Project Structure
+
+```
+├── main.py              # FastAPI application entry point
+├── routers/             # API route handlers
+│   ├── root.py         # Root and health endpoints
+│   └── items.py        # Items management endpoints
+├── schemas/             # Pydantic models for request/response validation
+│   ├── base.py         # Base response models
+│   └── items.py        # Item-related schemas
+├── modules/             # Business logic modules
+│   ├── health.py       # Health check service
+│   └── items.py        # Item management service
+└── utils/               # Utility modules
+    └── logger.py       # Centralized logging configuration
+```
 
 ## Logging
 
