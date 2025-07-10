@@ -1,12 +1,9 @@
-import logging
 from fastapi import FastAPI
 from routers import root
+from utils.logger import LoggerConfig, get_app_logger
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+LoggerConfig.setup_logging()
+logger = get_app_logger()
 
 app = FastAPI()
 
