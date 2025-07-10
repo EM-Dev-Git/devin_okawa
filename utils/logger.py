@@ -6,6 +6,7 @@ FastAPIアプリケーション全体で使用する統一されたログ設定�
 import logging
 import sys
 from typing import Optional
+from config import settings
 
 
 class LoggerConfig:
@@ -16,7 +17,7 @@ class LoggerConfig:
     @classmethod
     def setup_logging(
         cls,
-        level: int = logging.INFO,
+        level: Optional[int] = None,
         format_string: Optional[str] = None,
         include_timestamp: bool = True
     ) -> None:
@@ -24,18 +25,18 @@ class LoggerConfig:
         アプリケーション全体のログ設定を初期化
         
         Args:
-            level: ログレベル (デフォルト: INFO)
+            level: ログレベル (デフォルト: 設定ファイルから取得)
             format_string: カスタムフォーマット文字列
             include_timestamp: タイムスタンプを含めるかどうか
         """
         if cls._configured:
             return
             
+        if level is None:
+            level = getattr(logging, settings.log_level.upper(), logging.INFO)
+            
         if format_string is None:
-            if include_timestamp:
-                format_string = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            else:
-                format_string = '%(name)s - %(levelname)s - %(message)s'
+            format_string = settings.log_format
         
         logging.basicConfig(
             level=level,

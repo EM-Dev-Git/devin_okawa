@@ -8,6 +8,7 @@ authors = ["Your Name <your.email@example.com>"]
 python = "^3.12"
 fastapi = {extras = ["standard"], version = "^0.116.0"}
 uvicorn = {extras = ["standard"], version = "^0.32.0"}
+pydantic-settings = "^2.10.1"
 
 [build-system]
 requires = ["poetry-core"]
