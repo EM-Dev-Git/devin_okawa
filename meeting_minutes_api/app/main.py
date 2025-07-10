@@ -1,12 +1,20 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
 from pydantic import BaseModel
+from starlette.responses import HTMLResponse
 from typing import List, Optional
 import os
 from openai import OpenAI
 import json
 
-app = FastAPI(title="Meeting Minutes API", description="Convert meeting transcripts to structured meeting minutes")
+app = FastAPI(
+    title="Meeting Minutes API", 
+    description="Convert meeting transcripts to structured meeting minutes",
+    docs_url=None,
+    redoc_url="/redoc", 
+    openapi_url="/openapi.json"
+)
 
 # Disable CORS. Do not remove this for full-stack development.
 app.add_middleware(
@@ -212,6 +220,46 @@ def get_processor():
         except ValueError as e:
             raise HTTPException(status_code=500, detail=str(e))
     return processor
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    """
+    Custom Swagger UI endpoint that embeds OpenAPI spec directly to avoid fetch issues
+    """
+    openapi_schema = app.openapi()
+    openapi_json = json.dumps(openapi_schema)
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css">
+    <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+    <title>{app.title} - Swagger UI</title>
+    </head>
+    <body>
+    <div id="swagger-ui">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+    <script>
+    const spec = {openapi_json};
+    const ui = SwaggerUIBundle({{
+        spec: spec,
+        dom_id: '#swagger-ui',
+        layout: 'BaseLayout',
+        deepLinking: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIBundle.SwaggerUIStandalonePreset
+        ]
+    }});
+    </script>
+    </body>
+    </html>
+    """
+    return HTMLResponse(html)
 
 @app.post("/generate-minutes")
 async def generate_minutes(request: TranscriptRequest):
