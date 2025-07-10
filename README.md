@@ -10,8 +10,18 @@ A simple FastAPI application following the official "First Steps" tutorial.
    ```
 
 2. Run the development server:
+
+   **Option 1: Using Poetry (Recommended)**
    ```bash
-   fastapi dev main.py
+   poetry run uvicorn main:app --reload --host 127.0.0.1 --port 8000
+   ```
+
+   **Option 2: Direct Uvicorn (requires virtual environment activation)**
+   ```bash
+   # Activate Poetry virtual environment first
+   poetry shell
+   # Then run Uvicorn directly
+   uvicorn main:app --reload --host 127.0.0.1 --port 8000
    ```
 
 3. Open your browser at http://127.0.0.1:8000
@@ -44,6 +54,22 @@ A simple FastAPI application following the official "First Steps" tutorial.
 └── utils/               # Utility modules
     └── logger.py       # Centralized logging configuration
 ```
+
+## Environment Variables
+
+The application uses environment variables for configuration. Copy `.env.example` to `.env` and modify as needed:
+
+```bash
+cp .env.example .env
+```
+
+Key environment variables:
+- `APP_NAME`: Application name (default: "FastAPI Basic Application")
+- `DEBUG`: Enable/disable debug mode (default: true)
+- `HOST`: Server host (default: "127.0.0.1")
+- `PORT`: Server port (default: 8000)
+- `SECRET_KEY`: Application secret key
+- `LOG_LEVEL`: Logging level (INFO, DEBUG, WARNING, ERROR)
 
 ## Logging
 
