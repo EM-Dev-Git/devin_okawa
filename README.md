@@ -24,3 +24,13 @@ A simple FastAPI application following the official "First Steps" tutorial.
 ## Endpoints
 
 - `GET /` - Returns a simple "Hello World" message
+- `GET /health` - Returns application health status
+
+## Logging
+
+The application includes comprehensive logging functionality:
+
+- **Startup/Shutdown**: Application lifecycle events are logged
+- **Endpoint Access**: All API endpoint calls are logged with INFO level
+- **Error Handling**: Exceptions are logged with ERROR level
+- **Log Format**: Timestamp, module name, level, and message
