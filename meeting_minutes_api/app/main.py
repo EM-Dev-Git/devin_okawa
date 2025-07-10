@@ -8,8 +8,15 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 import json
+import traceback
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
+key = os.getenv("OPENAI_API_KEY")
+print("APIキー：", key)
 
 app = FastAPI(
     title="Meeting Minutes API",
@@ -80,6 +87,7 @@ class TranscriptProcessor:
         prompt = self._create_processing_prompt(request.transcript)
 
         try:
+            logger.info("OpenAI APIリクエストを開始します")
             response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
@@ -88,9 +96,13 @@ class TranscriptProcessor:
                 ],
                 temperature=0.3
             )
+            logger.info("OpenAI APIレスポンスを受信しました")
 
             ai_content = response.choices[0].message.content
+            logger.info(f"AI応答内容の長さ: {len(ai_content) if ai_content else 0}文字")
+            
             parsed_data = self._parse_ai_response(ai_content)
+            logger.info("AI応答の解析が完了しました")
 
             meeting_minutes = MeetingMinutes(
                 title=request.header.title,
@@ -107,7 +119,22 @@ class TranscriptProcessor:
             return meeting_minutes
 
         except Exception as e:
-            raise Exception(f"Failed to process transcript: {str(e)}")
+            error_type = type(e).__name__
+            error_message = str(e)
+            stack_trace = traceback.format_exc()
+            
+            logger.error(f"トランスクリプト処理エラー - タイプ: {error_type}")
+            logger.error(f"エラーメッセージ: {error_message}")
+            logger.error(f"スタックトレース:\n{stack_trace}")
+            
+            detailed_error = {
+                "error_type": error_type,
+                "error_message": error_message,
+                "processing_stage": self._determine_processing_stage(e),
+                "stack_trace": stack_trace.split('\n')[-3:-1]  # 最も関連性の高い部分のみ
+            }
+            
+            raise Exception(f"トランスクリプト処理に失敗しました: {json.dumps(detailed_error, ensure_ascii=False, indent=2)}")
 
     def _get_system_prompt(self) -> str:
         return """
@@ -144,18 +171,55 @@ class TranscriptProcessor:
 
     def _parse_ai_response(self, ai_content: str) -> dict:
         try:
+            logger.info("AI応答の解析を開始します")
+            
+            if not ai_content:
+                raise ValueError("AI応答が空です")
+            
             start_idx = ai_content.find('{')
             end_idx = ai_content.rfind('}') + 1
 
             if start_idx == -1 or end_idx == 0:
-                raise ValueError("No JSON found in AI response")
+                logger.error(f"AI応答にJSONが見つかりません。応答内容: {ai_content[:200]}...")
+                raise ValueError("AI応答にJSON形式のデータが見つかりません")
 
             json_str = ai_content[start_idx:end_idx]
-            parsed_data = json.loads(json_str)
+            logger.info(f"抽出されたJSON文字列の長さ: {len(json_str)}文字")
+            
+            try:
+                parsed_data = json.loads(json_str)
+                logger.info("JSON解析が成功しました")
+            except json.JSONDecodeError as json_error:
+                logger.error(f"JSON解析エラー: {json_error}")
+                logger.error(f"解析対象のJSON: {json_str}")
+                raise json.JSONDecodeError(f"JSON解析に失敗: {json_error.msg} (位置: {json_error.pos})", json_str, json_error.pos)
 
-            daily_goals = [PersonGoal(**goal) for goal in parsed_data.get("daily_goals", [])]
-            progress_and_issues = [PersonProgress(**progress) for progress in parsed_data.get("progress_and_issues", [])]
-            problem_solutions = [PersonSolution(**solution) for solution in parsed_data.get("problem_solutions", [])]
+            required_keys = ["daily_goals", "progress_and_issues", "problem_solutions"]
+            missing_keys = [key for key in required_keys if key not in parsed_data]
+            if missing_keys:
+                logger.error(f"必須キーが不足: {missing_keys}")
+                raise ValueError(f"AI応答に必須キーが不足しています: {missing_keys}")
+
+            try:
+                daily_goals = [PersonGoal(**goal) for goal in parsed_data.get("daily_goals", [])]
+                logger.info(f"日次目標を{len(daily_goals)}件処理しました")
+            except Exception as e:
+                logger.error(f"日次目標の処理エラー: {e}")
+                raise ValueError(f"日次目標データの処理に失敗: {e}")
+
+            try:
+                progress_and_issues = [PersonProgress(**progress) for progress in parsed_data.get("progress_and_issues", [])]
+                logger.info(f"進捗・問題点を{len(progress_and_issues)}件処理しました")
+            except Exception as e:
+                logger.error(f"進捗・問題点の処理エラー: {e}")
+                raise ValueError(f"進捗・問題点データの処理に失敗: {e}")
+
+            try:
+                problem_solutions = [PersonSolution(**solution) for solution in parsed_data.get("problem_solutions", [])]
+                logger.info(f"問題解決策を{len(problem_solutions)}件処理しました")
+            except Exception as e:
+                logger.error(f"問題解決策の処理エラー: {e}")
+                raise ValueError(f"問題解決策データの処理に失敗: {e}")
 
             return {
                 "daily_goals": daily_goals,
@@ -163,8 +227,32 @@ class TranscriptProcessor:
                 "problem_solutions": problem_solutions
             }
 
+        except Exception as e:
+            error_type = type(e).__name__
+            error_context = {
+                "error_type": error_type,
+                "error_message": str(e),
+                "ai_content_length": len(ai_content) if ai_content else 0,
+                "ai_content_preview": ai_content[:300] if ai_content else "なし"
+            }
+            
         except (json.JSONDecodeError, ValueError) as e:
             raise Exception(f"Failed to parse AI response: {str(e)}")
+
+    def _determine_processing_stage(self, error: Exception) -> str:
+        """エラーが発生した処理段階を特定する"""
+        error_message = str(error).lower()
+        
+        if "api" in error_message or "openai" in error_message:
+            return "OpenAI API呼び出し"
+        elif "json" in error_message or "parse" in error_message:
+            return "AI応答の解析"
+        elif "pydantic" in error_message or "validation" in error_message:
+            return "データ検証"
+        elif "model" in error_message:
+            return "データモデル作成"
+        else:
+            return "不明な段階"
 
 class MeetingMinutesFormatter:
     def format_to_text(self, minutes: MeetingMinutes) -> str:
@@ -275,12 +363,48 @@ async def generate_minutes(request: TranscriptRequest):
         formatted_minutes: テキスト形式の議事録
     """
     try:
+        logger.info("議事録生成リクエストを受信しました")
+        logger.info(f"会議タイトル: {request.header.title}")
+        logger.info(f"参加者数: {len(request.header.participants)}")
+        logger.info(f"トランスクリプト長: {len(request.transcript)}文字")
+        
         proc = get_processor()
+        logger.info("TranscriptProcessorを取得しました")
 
         minutes = proc.process_transcript(request)
+        logger.info("トランスクリプト処理が完了しました")
 
         formatted_text = formatter.format_to_text(minutes)
+        logger.info(f"議事録フォーマット完了 - 出力長: {len(formatted_text)}文字")
 
         return {"formatted_minutes": formatted_text}
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        error_type = type(e).__name__
+        error_message = str(e)
+        stack_trace = traceback.format_exc()
+        
+        logger.error(f"議事録生成エラー - タイプ: {error_type}")
+        logger.error(f"エラーメッセージ: {error_message}")
+        logger.error(f"スタックトレース:\n{stack_trace}")
+        
+        error_details = {
+            "timestamp": "2025-07-10T02:26:42Z",
+            "error_type": error_type,
+            "error_message": error_message,
+            "request_info": {
+                "title": request.header.title if hasattr(request, 'header') else "不明",
+                "participants_count": len(request.header.participants) if hasattr(request, 'header') and hasattr(request.header, 'participants') else 0,
+                "transcript_length": len(request.transcript) if hasattr(request, 'transcript') else 0
+            },
+            "stack_trace_summary": stack_trace.split('\n')[-3:-1]  # 最も関連性の高い部分
+        }
+        
+        detailed_message = f"議事録生成に失敗しました:\n{json.dumps(error_details, ensure_ascii=False, indent=2)}"
+        
+        raise HTTPException(
+            status_code=500, 
+            detail=detailed_message
+        )
