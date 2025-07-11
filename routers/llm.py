@@ -8,12 +8,12 @@ from utils.logger import get_router_logger
 from schemas.llm import MeetingMinutesInput, MeetingMinutesOutput
 from modules.llm import MeetingMinutesService
 
-logger = get_router_logger("meeting_minutes")
-router = APIRouter(prefix="/meeting-minutes", tags=["meeting-minutes"])
+logger = get_router_logger("llm")
+router = APIRouter(prefix="/llm/call", tags=["llm"])
 meeting_service = MeetingMinutesService()
 
 
-@router.post("/generate", response_model=MeetingMinutesOutput)
+@router.post("/minutes", response_model=MeetingMinutesOutput)
 async def generate_meeting_minutes(input_data: MeetingMinutesInput):
     """
     Generate text format meeting minutes from JSON input
