@@ -1,23 +1,12 @@
-"""
-Meeting minutes prompt templates and formatting logic
-Contains the Japanese meeting minutes format templates for OpenAI
-"""
 
 from schemas.llm import MeetingMinutesInput
 from typing import List
 
 
 class MeetingMinutesPrompt:
-    """Class containing meeting minutes formatting templates and logic for OpenAI"""
     
     @staticmethod
     def call_system_minutes() -> str:
-        """
-        Generate the system prompt for OpenAI meeting minutes generation
-        
-        Returns:
-            str: System prompt with rules and role definition
-        """
         data = (
             f'# あなたの役割\n'
             f'あなたはユーザーから投げられた会話の文字起こしをもとに議事録を作成するスペシャリストです。\n'
@@ -39,21 +28,6 @@ class MeetingMinutesPrompt:
 
     @staticmethod
     def call_user_minutes(title: str, date: str, meeting_room: str, attendees: str, absentees: str, facility: str, text: str) -> str:
-        """
-        Generate the user prompt for OpenAI meeting minutes generation
-        
-        Args:
-            title: Meeting title
-            date: Meeting date
-            meeting_room: Meeting room/location
-            attendees: Meeting attendees
-            absentees: Absent members
-            facility: Meeting facilitator
-            text: Meeting transcript text
-            
-        Returns:
-            str: User prompt with meeting data and format template
-        """
         data = (
             f'# 文字起こし内容\n'
             f'{text}\n'
@@ -103,19 +77,9 @@ class MeetingMinutesPrompt:
     
     @staticmethod
     def format_meeting_minutes_text(data: MeetingMinutesInput) -> str:
-        """
-        Format the meeting minutes using OpenAI prompts (for testing without OpenAI)
-        
-        フォールバック機能: OpenAI APIキーが設定されていない場合や、
-        開発・テスト時にAPIコストを発生させずに動作確認を行うための代替手段として使用。
-        実際の会議内容の解析は行わず、基本的なフォーマット構造のみを提供する。
-        
-        Args:
-            data: Meeting minutes input data
-            
-        Returns:
-            str: Formatted meeting minutes text using the prompt template
-        """
+        # フォールバック機能: OpenAI APIキーが設定されていない場合や、
+        # 開発・テスト時にAPIコストを発生させずに動作確認を行うための代替手段として使用。
+        # 実際の会議内容の解析は行わず、基本的なフォーマット構造のみを提供する。
         system_prompt = MeetingMinutesPrompt.call_system_minutes()
         user_prompt = MeetingMinutesPrompt.call_user_minutes(
             data.title, data.date, data.meeting_room, 
