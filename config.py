@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     upload_dir: str = "./uploads"  # アップロードディレクトリ
     
     openai_api_key: str = "your-openai-api-key-here"  # OpenAI APIキー
+    openai_model: str = "gpt-4"  # OpenAI使用モデル
+    openai_max_tokens: int = 2000  # OpenAI最大トークン数
+    openai_temperature: float = 0.7  # OpenAI生成温度（0.0-2.0）
     
     @property
     def cors_origins_list(self) -> List[str]:
