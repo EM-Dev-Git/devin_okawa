@@ -42,13 +42,14 @@ class MeetingMinutesService:
         )
         
         response = client.chat.completions.create(
-            model="gpt-4",
+            model=input_data.model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            max_tokens=2000,
-            temperature=0.7
+            max_tokens=input_data.max_tokens,
+            temperature=input_data.temperature,
+            top_p=input_data.top_p
         )
         
         return response.choices[0].message.content
