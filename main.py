@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import root, llm
+from routers import llm
 from utils.logger import LoggerConfig, get_app_logger
 from config import settings
 
@@ -22,7 +22,6 @@ app.add_middleware(
     allow_headers=settings.cors_allow_headers.split(",") if settings.cors_allow_headers != "*" else ["*"],
 )
 
-app.include_router(root.router)
 app.include_router(llm.router)
 
 @app.on_event("startup")
