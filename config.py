@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     max_file_size: int = 10485760  # 10MB
     upload_dir: str = "./uploads"
     
+    openai_api_key: str = "your-openai-api-key-here"
+    
     @property
     def cors_origins_list(self) -> List[str]:
         """Convert CORS origins string to list"""
