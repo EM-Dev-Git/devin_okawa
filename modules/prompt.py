@@ -106,6 +106,10 @@ class MeetingMinutesPrompt:
         """
         Format the meeting minutes using OpenAI prompts (for testing without OpenAI)
         
+        フォールバック機能: OpenAI APIキーが設定されていない場合や、
+        開発・テスト時にAPIコストを発生させずに動作確認を行うための代替手段として使用。
+        実際の会議内容の解析は行わず、基本的なフォーマット構造のみを提供する。
+        
         Args:
             data: Meeting minutes input data
             
@@ -152,32 +156,3 @@ class MeetingMinutesPrompt:
         lines.append("　③課題に対する解決策")
         
         return "\n".join(lines)
-    
-    @staticmethod
-    def get_agenda_template() -> List[str]:
-        """
-        Get the standard agenda template items
-        
-        Returns:
-            List[str]: Standard agenda items
-        """
-        return [
-            "本日の業務目標",
-            "現在の進捗と問題点", 
-            "問題解決方法",
-            "次回進捗報告内容"
-        ]
-    
-    @staticmethod
-    def get_next_meeting_template() -> List[str]:
-        """
-        Get the standard next meeting agenda template
-        
-        Returns:
-            List[str]: Next meeting agenda items
-        """
-        return [
-            "①先日業務目標について",
-            "②進捗、課題報告", 
-            "③課題に対する解決策"
-        ]
