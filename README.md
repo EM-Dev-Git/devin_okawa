@@ -10,18 +10,13 @@ A simple FastAPI application following the official "First Steps" tutorial.
    ```
 
 2. Run the development server:
-
-   **Option 1: Using Poetry (Recommended)**
    ```bash
-   poetry run uvicorn main:app --reload --host 127.0.0.1 --port 8000
+   uvicorn main:app --reload --host 127.0.0.1 --port 8000
    ```
 
-   **Option 2: Direct Uvicorn (requires virtual environment activation)**
+   **Alternative: Using Poetry wrapper**
    ```bash
-   # Activate Poetry virtual environment first
-   poetry shell
-   # Then run Uvicorn directly
-   uvicorn main:app --reload --host 127.0.0.1 --port 8000
+   poetry run uvicorn main:app --reload --host 127.0.0.1 --port 8000
    ```
 
 3. Open your browser at http://127.0.0.1:8000
