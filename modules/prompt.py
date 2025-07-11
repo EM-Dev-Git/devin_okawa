@@ -25,15 +25,10 @@ class MeetingMinutesPrompt:
         
         lines.append(f"タイトル：{data.title}")
         lines.append(f"日時：{data.date}")
-        lines.append(f"場所：{data.location}")
-        lines.append(f"参加者：{', '.join(data.participants)}")
-        
-        if data.absent_members:
-            lines.append(f"欠席者：{', '.join(data.absent_members)}")
-        else:
-            lines.append("欠席者：なし")
-            
-        lines.append(f"ファシリティ：{data.facilitator}")
+        lines.append(f"場所：{data.meeting_room}")
+        lines.append(f"参加者：{data.attendees}")
+        lines.append(f"欠席者：{data.absentees}")
+        lines.append(f"ファシリティ：{data.facility}")
         lines.append("")
         
         lines.append("アジェンダ")
@@ -44,29 +39,25 @@ class MeetingMinutesPrompt:
         lines.append("")
         
         lines.append("・本日の業務目標")
-        for goal in data.participant_goals:
-            lines.append(f"　{goal.name}")
-            lines.append(f"　{goal.goal_content}")
+        lines.append("　（会議内容から抽出）")
         lines.append("")
         
         lines.append("・現在の進捗と問題点")
-        for progress in data.participant_progress:
-            lines.append(f"　・{progress.name}")
-            lines.append(f"　　　前日の達成度：{progress.previous_achievement_rate}%")
-            lines.append(f"　　　進捗状況：{progress.progress_status}")
-            lines.append(f"　　　問題点：{progress.issues}")
+        lines.append("　（会議内容から抽出）")
         lines.append("")
         
         lines.append("・問題解決方法")
-        for solution in data.participant_solutions:
-            lines.append(f"　・{solution.name}")
-            lines.append(f"　　{solution.solution_content}")
+        lines.append("　（会議内容から抽出）")
         lines.append("")
         
         lines.append("次回進捗報告内容")
         lines.append("　①先日業務目標について")
         lines.append("　②進捗、課題報告")
         lines.append("　③課題に対する解決策")
+        lines.append("")
+        
+        lines.append("会議内容：")
+        lines.append(data.text)
         
         return "\n".join(lines)
     
