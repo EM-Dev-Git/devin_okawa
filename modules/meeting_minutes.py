@@ -36,8 +36,4 @@ class MeetingMinutesService:
             
         except Exception as e:
             logger.error(f"Error generating meeting minutes: {str(e)}")
-            return MeetingMinutesOutput(
-                success=False,
-                message=f"Failed to generate meeting minutes: {str(e)}",
-                meeting_minutes_text=""
-            )
+            raise Exception(f"Failed to generate meeting minutes: {str(e)}")

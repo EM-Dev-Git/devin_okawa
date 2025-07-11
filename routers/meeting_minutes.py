@@ -31,11 +31,7 @@ async def generate_meeting_minutes(input_data: MeetingMinutesInput):
         
         result = meeting_service.generate_meeting_minutes(input_data)
         
-        if result.success:
-            logger.info("Meeting minutes generated successfully")
-        else:
-            logger.warning(f"Meeting minutes generation failed: {result.message}")
-            
+        logger.info("Meeting minutes generated successfully")
         return result
         
     except Exception as e:

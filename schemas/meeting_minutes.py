@@ -46,6 +46,4 @@ class MeetingMinutesInput(BaseModel):
 
 class MeetingMinutesOutput(BaseModel):
     """Output schema for generated meeting minutes"""
-    success: bool = True
-    message: str = "Meeting minutes generated successfully"
     meeting_minutes_text: str = Field(..., description="Generated meeting minutes in text format")
