@@ -44,7 +44,7 @@ class Settings(BaseSettings):
         return [origin.strip() for origin in self.cors_origins.split(",")]
     
     class Config:
-        env_file = ".env"
+        env_file = "env/.env"
         env_file_encoding = "utf-8"
         case_sensitive = False
 
