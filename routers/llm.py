@@ -1,7 +1,5 @@
-"""
-Meeting minutes router for JSON to text conversion
-Single endpoint for meeting minutes generation
-"""
+
+
 
 from fastapi import APIRouter, HTTPException
 from utils.logger import get_router_logger
@@ -15,17 +13,7 @@ meeting_service = MeetingMinutesService()
 
 @router.post("/minutes", response_model=MeetingMinutesOutput)
 async def generate_meeting_minutes(input_data: MeetingMinutesInput):
-    """
-    Generate text format meeting minutes from JSON input
-    
-    Takes structured JSON data and converts it to formatted Japanese meeting minutes text.
-    
-    Args:
-        input_data: Meeting information including participants, goals, progress, and solutions
-        
-    Returns:
-        MeetingMinutesOutput: Generated meeting minutes in text format
-    """
+    # input_data: 参加者、目標、進捗、解決策を含む会議情報
     try:
         logger.info(f"Received meeting minutes generation request for: {input_data.title}")
         

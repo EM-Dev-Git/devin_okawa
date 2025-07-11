@@ -1,7 +1,5 @@
-"""
-共通ログ機能モジュール
-FastAPIアプリケーション全体で使用する統一されたログ設定を提供
-"""
+# 共通ログ機能モジュール
+# FastAPIアプリケーション全体で使用する統一されたログ設定を提供
 
 import logging
 import sys
@@ -10,9 +8,8 @@ from config import settings
 
 
 class LoggerConfig:
-    """ログ設定を管理するクラス"""
     
-    _configured = False
+    _configured = False  # ログ設定済みフラグ（重複設定防止用）
     
     @classmethod
     def setup_logging(
@@ -21,14 +18,10 @@ class LoggerConfig:
         format_string: Optional[str] = None,
         include_timestamp: bool = True
     ) -> None:
-        """
-        アプリケーション全体のログ設定を初期化
-        
-        Args:
-            level: ログレベル (デフォルト: 設定ファイルから取得)
-            format_string: カスタムフォーマット文字列
-            include_timestamp: タイムスタンプを含めるかどうか
-        """
+        # アプリケーション全体のログ設定を初期化
+        # level: ログレベル（デフォルト: 設定ファイルから取得）
+        # format_string: カスタムフォーマット文字列
+        # include_timestamp: タイムスタンプを含めるかどうか
         if cls._configured:
             return
             
@@ -50,15 +43,9 @@ class LoggerConfig:
 
 
 def get_logger(name: str) -> logging.Logger:
-    """
-    指定された名前のロガーインスタンスを取得
-    
-    Args:
-        name: ロガー名（通常は __name__ を使用）
-        
-    Returns:
-        logging.Logger: 設定済みのロガーインスタンス
-    """
+    # 指定された名前のロガーインスタンスを取得
+    # name: ロガー名（通常は __name__ を使用）
+    # 戻り値: 設定済みのロガーインスタンス
     if not LoggerConfig._configured:
         LoggerConfig.setup_logging()
     
@@ -66,23 +53,13 @@ def get_logger(name: str) -> logging.Logger:
 
 
 def get_app_logger() -> logging.Logger:
-    """
-    アプリケーションメインのロガーを取得
-    
-    Returns:
-        logging.Logger: アプリケーション用ロガー
-    """
+    # アプリケーションメインのロガーを取得
+    # 戻り値: アプリケーション用ロガー
     return get_logger("fastapi_app")
 
 
 def get_router_logger(router_name: str) -> logging.Logger:
-    """
-    ルーター用のロガーを取得
-    
-    Args:
-        router_name: ルーター名
-        
-    Returns:
-        logging.Logger: ルーター用ロガー
-    """
+    # ルーター用のロガーを取得
+    # router_name: ルーター名
+    # 戻り値: ルーター用ロガー
     return get_logger(f"fastapi_app.routers.{router_name}")

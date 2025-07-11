@@ -1,7 +1,5 @@
-"""
-Meeting minutes business logic module
-Converts JSON input to formatted text meeting minutes
-"""
+
+
 
 from utils.logger import get_logger
 from schemas.llm import MeetingMinutesInput, MeetingMinutesOutput
@@ -12,18 +10,9 @@ logger = get_logger("fastapi_app.modules.meeting_minutes")
 
 
 class MeetingMinutesService:
-    """Service class for meeting minutes generation operations"""
     
     def generate_meeting_minutes(self, input_data: MeetingMinutesInput) -> MeetingMinutesOutput:
-        """
-        Generate formatted text meeting minutes from JSON input
-        
-        Args:
-            input_data: Meeting minutes input data
-            
-        Returns:
-            MeetingMinutesOutput: Generated meeting minutes in text format
-        """
+        # input_data: 議事録入力データ
         logger.info(f"Generating meeting minutes for: {input_data.title}")
         
         try:

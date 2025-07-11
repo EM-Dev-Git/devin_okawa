@@ -1,22 +1,18 @@
-"""
-Meeting minutes schema models for JSON input and text output
-Following FastAPI official documentation patterns for Pydantic models
-"""
+
+
 
 from pydantic import BaseModel, Field
 
 
 class MeetingMinutesInput(BaseModel):
-    """Input schema for meeting minutes generation from JSON"""
-    title: str = Field(..., description="Meeting title")
-    date: str = Field(..., description="Meeting date")
-    meeting_room: str = Field(..., description="Meeting room/location")
-    attendees: str = Field(..., description="Meeting attendees")
-    absentees: str = Field(..., description="Absent members")
-    facility: str = Field(..., description="Meeting facilitator/chairperson")
-    text: str = Field(..., description="Meeting transcript text")
+    title: str = Field(..., description="Meeting title")  # 会議タイトル
+    date: str = Field(..., description="Meeting date")  # 会議日時
+    meeting_room: str = Field(..., description="Meeting room/location")  # 会議室/場所
+    attendees: str = Field(..., description="Meeting attendees")  # 参加者
+    absentees: str = Field(..., description="Absent members")  # 欠席者
+    facility: str = Field(..., description="Meeting facilitator/chairperson")  # 司会者/ファシリティ
+    text: str = Field(..., description="Meeting transcript text")  # 会議文字起こしテキスト
 
 
 class MeetingMinutesOutput(BaseModel):
-    """Output schema for generated meeting minutes"""
-    meeting_minutes_text: str = Field(..., description="Generated meeting minutes in text format")
+    meeting_minutes_text: str = Field(..., description="Generated meeting minutes in text format")  # 生成された議事録テキスト
