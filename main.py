@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import root, items
+from routers import root, items, meeting_minutes
 from utils.logger import LoggerConfig, get_app_logger
 from config import settings
 
@@ -24,6 +24,7 @@ app.add_middleware(
 
 app.include_router(root.router)
 app.include_router(items.router)
+app.include_router(meeting_minutes.router)
 
 @app.on_event("startup")
 async def startup_event():
