@@ -5,8 +5,8 @@ Single endpoint for meeting minutes generation
 
 from fastapi import APIRouter, HTTPException
 from utils.logger import get_router_logger
-from schemas.meeting_minutes import MeetingMinutesInput, MeetingMinutesOutput
-from modules.meeting_minutes import MeetingMinutesService
+from schemas.llm import MeetingMinutesInput, MeetingMinutesOutput
+from modules.llm import MeetingMinutesService
 
 logger = get_router_logger("meeting_minutes")
 router = APIRouter(prefix="/meeting-minutes", tags=["meeting-minutes"])

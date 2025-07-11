@@ -4,7 +4,7 @@ Converts JSON input to formatted text meeting minutes
 """
 
 from utils.logger import get_logger
-from schemas.meeting_minutes import MeetingMinutesInput, MeetingMinutesOutput
+from schemas.llm import MeetingMinutesInput, MeetingMinutesOutput
 from modules.prompt import MeetingMinutesPrompt
 from typing import List
 

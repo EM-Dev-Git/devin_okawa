@@ -3,7 +3,7 @@ Meeting minutes prompt templates and formatting logic
 Contains the Japanese meeting minutes format templates
 """
 
-from schemas.meeting_minutes import MeetingMinutesInput
+from schemas.llm import MeetingMinutesInput
 from typing import List
 
 
