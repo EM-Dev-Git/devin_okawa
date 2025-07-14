@@ -61,11 +61,11 @@ class MinutesGenerator:
                 raw_response = self.openai_client.generate_minutes(prompt)
                 minutes_data = json.loads(raw_response)
                 minutes = MinutesOutput(**minutes_data)
-                logger.info("Minutes generation completed successfully using Azure OpenAI")
+                logger.info("Minutes generation completed successfully using OpenAI")
                 return minutes
                 
             except (ValueError, Exception) as api_error:
-                logger.warning(f"Azure OpenAI generation failed, using fallback: {str(api_error)}")
+                logger.warning(f"OpenAI generation failed, using fallback: {str(api_error)}")
                 return self._generate_fallback_minutes(transcript_data)
             
         except Exception as e:
