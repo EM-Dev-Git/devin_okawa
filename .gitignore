@@ -1,6 +1,3 @@
-# Environment files
-env/.env
-
 # Python
 __pycache__/
 *.py[cod]
@@ -72,6 +69,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+env/.env
 .env
 .venv
 venv/
