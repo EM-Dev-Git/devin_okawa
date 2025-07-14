@@ -45,7 +45,7 @@ try:
     
     test_transcript = TranscriptInput(
         meeting_title="テスト会議",
-        meeting_date="2025-01-14",
+        meeting_date="2025-01-14T10:00:00",
         participants=["田中", "佐藤"],
         transcript_text="短いテストトランスクリプト"
     )
@@ -62,7 +62,7 @@ try:
     print("\n=== Large Transcript Performance Test ===")
     large_transcript = TranscriptInput(
         meeting_title="大規模会議",
-        meeting_date="2025-01-14", 
+        meeting_date="2025-01-14T14:00:00", 
         participants=["田中", "佐藤", "鈴木"],
         transcript_text="これは非常に長いトランスクリプトです。" * 1000
     )
