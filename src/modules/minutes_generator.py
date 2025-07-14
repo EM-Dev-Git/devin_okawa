@@ -44,24 +44,36 @@ class MinutesGenerator:
         return prompt
         
     def generate_minutes(self, transcript_data: TranscriptInput) -> MinutesOutput:
+        import time
+        start_time = time.time()
+        
         try:
             logger.info(f"Starting minutes generation for: {transcript_data.meeting_title}")
+            
+            estimated_tokens = len(transcript_data.transcript_text) // 4
+            logger.info(f"Estimated transcript tokens: {estimated_tokens}")
+            
+            if estimated_tokens > 4000:
+                logger.warning(f"Large transcript detected ({estimated_tokens} tokens) - processing may take longer")
             
             try:
                 prompt = self.create_prompt(transcript_data)
                 raw_response = self.openai_client.generate_minutes(prompt)
                 minutes_data = json.loads(raw_response)
                 minutes = MinutesOutput(**minutes_data)
-                logger.info("Minutes generation completed successfully using OpenAI")
+                logger.info("Minutes generation completed successfully using Azure OpenAI")
                 return minutes
                 
             except (ValueError, Exception) as api_error:
-                logger.warning(f"OpenAI generation failed, using fallback: {str(api_error)}")
+                logger.warning(f"Azure OpenAI generation failed, using fallback: {str(api_error)}")
                 return self._generate_fallback_minutes(transcript_data)
             
         except Exception as e:
             logger.error(f"Minutes generation error: {str(e)}")
             raise
+        finally:
+            end_time = time.time()
+            logger.info(f"Minutes generation completed in {end_time - start_time:.2f} seconds")
     
     def _generate_fallback_minutes(self, transcript_data: TranscriptInput) -> MinutesOutput:
         logger.info("Generating fallback minutes using template")
