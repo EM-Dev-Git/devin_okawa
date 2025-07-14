@@ -16,6 +16,6 @@ class Settings(BaseSettings):
     port: int = 8000
     
     class Config:
-        env_file = "../env/.env"
+        env_file = "env/.env"
 
 settings = Settings()
