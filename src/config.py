@@ -3,17 +3,17 @@ from typing import Optional
 
 class Settings(BaseSettings):
     openai_api_key: Optional[str] = None
-    openai_model: str = "gpt-4o"
-    openai_max_tokens: int = 2000
-    openai_temperature: float = 0.7
+    openai_model: str
+    openai_max_tokens: int
+    openai_temperature: float
     
-    app_name: str = "Meeting Minutes Generator"
-    app_version: str = "1.0.0"
-    debug: bool = False
-    log_level: str = "INFO"
+    app_name: str
+    app_version: str
+    debug: bool
+    log_level: str
     
-    host: str = "0.0.0.0"
-    port: int = 8000
+    host: str
+    port: int
     
     class Config:
         env_file = "env/.env"
