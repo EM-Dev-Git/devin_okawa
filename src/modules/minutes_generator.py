@@ -1,7 +1,7 @@
 from .azure_openai_client import AzureOpenAIClient
-from .config import settings
-from schemas.transcript import TranscriptInput
-from schemas.minutes import MinutesOutput
+from src.config import settings
+from src.schemas.transcript import TranscriptInput
+from src.schemas.minutes import MinutesOutput
 import logging
 import json
 import time

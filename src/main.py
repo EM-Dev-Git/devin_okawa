@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers.minutes import router as minutes_router
-from modules.logger_config import setup_logger
+from .routers.minutes import router as minutes_router
+from .modules.logger_config import setup_logger
 import logging
 
 setup_logger()

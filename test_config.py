@@ -1,4 +1,4 @@
-from modules.config import settings
+from src.config import settings
 print('Configuration test:')
 print(f'API Key: {settings.azure_openai_api_key[:10]}...')
 print(f'Model: {settings.azure_openai_model}')

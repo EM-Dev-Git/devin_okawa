@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from schemas.transcript import TranscriptInput
-from schemas.minutes import MinutesOutput
-from modules.minutes_generator import MinutesGenerator
+from src.schemas.transcript import TranscriptInput
+from src.schemas.minutes import MinutesOutput
+from src.modules.minutes_generator import MinutesGenerator
 import logging
 
 router = APIRouter(prefix="/api/v1/minutes", tags=["minutes"])
