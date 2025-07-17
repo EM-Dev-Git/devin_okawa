@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from .routers.minutes import router as minutes_router
-from .routers.auth import router as auth_router
+from .routers.auth import router as auth_router, login_router
 from .modules.logger_config import setup_logger
 from .middleware.auth import SessionAuthenticationMiddleware
 from .config import settings
@@ -34,6 +34,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(login_router)
 app.include_router(minutes_router)
 
 @app.get("/")

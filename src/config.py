@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     session_secret_key: str
     session_expire_hours: int = 24
     
-    auth_excluded_paths: str = "/api/v1/auth/login,/api/v1/auth/register,/api/v1/auth/logout,/login,/health"
+    auth_excluded_paths: str = "/api/v1/auth/login,/api/v1/auth/register,/api/v1/auth/logout,/login,/register,/health"
     
     @property
     def excluded_paths_list(self) -> List[str]:
