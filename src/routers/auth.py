@@ -7,6 +7,7 @@ import logging
 router = APIRouter(prefix="/api/v1/auth", tags=["authentication"])
 logger = logging.getLogger(__name__)
 
+#ログインページのルーター
 login_router = APIRouter(tags=["authentication"])
 
 @login_router.get("/login", response_class=HTMLResponse)
@@ -82,7 +83,7 @@ async def register_page():
             <button type="submit">Register</button>
         </form>
         <p><a href="/login">Already have an account? Login here</a></p>
-        
+
         <script>
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -92,14 +93,14 @@ async def register_page():
                 email: formData.get('email'),
                 password: formData.get('password')
             };
-            
+
             try {
                 const response = await fetch('/api/v1/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                
+
                 if (response.ok) {
                     alert('Registration successful! Please login.');
                     window.location.href = '/login';
@@ -125,10 +126,10 @@ async def register_user_api(user_data: UserCreate):
             email=user_data.email,
             password=user_data.password
         )
-        
+
         logger.info(f"User registration successful: {user_data.username}")
         return UserResponse(**user)
-        
+
     except ValueError as e:
         logger.warning(f"User registration failed: {str(e)}")
         raise HTTPException(
@@ -146,12 +147,12 @@ async def login_user_api(request: Request, username: str = Form(...), password: 
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password"
             )
-        
+
         request.session["user_id"] = user['username']
         request.session["logged_in"] = True
-        
+
         logger.info(f"User login successful: {username}")
-        
+
         content_type = request.headers.get("content-type", "")
         if "application/x-www-form-urlencoded" in content_type:
             from fastapi.responses import RedirectResponse
@@ -161,7 +162,7 @@ async def login_user_api(request: Request, username: str = Form(...), password: 
                 status_code=200,
                 content={"message": "Login successful", "user": user['username']}
             )
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -176,7 +177,7 @@ async def logout_user(request: Request):
     user_id = request.session.get("user_id")
     if user_id:
         logger.info(f"User logout: {user_id}")
-    
+
     request.session.clear()
     return JSONResponse(
         status_code=200,
