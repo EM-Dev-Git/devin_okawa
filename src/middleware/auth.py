@@ -14,8 +14,9 @@ class SessionAuthenticationMiddleware(BaseHTTPMiddleware):
         logger.info(f"Session authentication middleware initialized with excluded paths: {self.excluded_paths}")
 
     async def dispatch(self, request: Request, call_next):
+        logger.info(f"Processing request: {request.method} {request.url.path}")
         if any(request.url.path.startswith(path) for path in self.excluded_paths):
-            logger.debug(f"Path {request.url.path} is excluded from authentication")
+            logger.info(f"Path {request.url.path} is excluded from authentication - bypassing middleware")
             return await call_next(request)
         
         user_id = request.session.get("user_id")
