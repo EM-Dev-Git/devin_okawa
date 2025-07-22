@@ -25,13 +25,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(SessionAuthenticationMiddleware)
-
 app.add_middleware(
     SessionMiddleware,
     secret_key=settings.session_secret_key,
     max_age=settings.session_expire_hours * 3600
 )
+
+app.add_middleware(SessionAuthenticationMiddleware)
 
 app.include_router(auth_router)
 app.include_router(login_router)
