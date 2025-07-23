@@ -1,0 +1,12 @@
+2025-07-23 07:59:54,210 - transcript_minutes_api2.app.routers.auth - INFO - ユーザー登録開始: testuser
+2025-07-23 07:59:54,521 - transcript_minutes_api2.app.routers.auth - INFO - ユーザー登録完了: testuser
+2025-07-23 08:00:26,234 - transcript_minutes_api2.app.routers.auth - INFO - ログイン試行: testuser
+2025-07-23 08:00:26,519 - transcript_minutes_api2.app.routers.auth - INFO - ログイン成功: testuser
+2025-07-23 08:00:46,748 - transcript_minutes_api2.app.routers.minutes - INFO - 議事録生成開始: テスト会議 by testuser
+2025-07-23 08:00:46,748 - transcript_minutes_api2.app.modules.transcript_processor - INFO - トランスクリプト処理開始: テスト会議
+2025-07-23 08:00:47,197 - transcript_minutes_api2.app.modules.transcript_processor - ERROR - トランスクリプト処理エラー: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2025-07-23 08:00:47,197 - transcript_minutes_api2.app.modules.minutes_formatter - INFO - 議事録フォーマット処理開始
+2025-07-23 08:00:47,197 - transcript_minutes_api2.app.modules.minutes_formatter - INFO - 議事録フォーマット処理完了
+2025-07-23 08:00:47,206 - transcript_minutes_api2.app.routers.minutes - INFO - 議事録生成完了: 1
+2025-07-23 08:00:47,512 - transcript_minutes_api2.app.routers.minutes - INFO - 議事録一覧取得: testuser
+2025-07-23 08:00:47,514 - transcript_minutes_api2.app.routers.minutes - INFO - 議事録一覧取得完了: 1件
