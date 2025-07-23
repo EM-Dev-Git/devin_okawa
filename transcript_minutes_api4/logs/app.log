@@ -1,0 +1,12 @@
+[2025-07-23 06:29:32] [INFO] [app.main] アプリケーション開始
+[2025-07-23 06:29:32] [INFO] [app.main] データベーステーブル作成完了
+[2025-07-23 06:29:57] [INFO] [app.main] ルートエンドポイントアクセス
+[2025-07-23 06:29:57] [INFO] [app.main] ヘルスチェックアクセス
+[2025-07-23 06:30:10] [INFO] [app.routers.auth] ユーザー登録開始: testuser
+[2025-07-23 06:30:10] [WARNING] [passlib.handlers.bcrypt] (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.cache/pypoetry/virtualenvs/transcript-minutes-api4-dUfVvqW1-py3.12/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+[2025-07-23 06:30:10] [INFO] [app.routers.auth] ユーザー登録成功: testuser
