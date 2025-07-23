@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     log_file_path: str = "./logs/app.log"
     log_max_size: int = 10485760
     log_backup_count: int = 5
+    
+    graph_tenant_id: Optional[str] = None
+    graph_client_id: Optional[str] = None
+    graph_client_secret: Optional[str] = None
 
     class Config:
         env_file = ".env"
