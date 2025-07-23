@@ -7,7 +7,8 @@ from ..models import User, MeetingMinutes
 from ..schemas.graph import (
     MeetingRequest, TranscriptRequest, CallRecordsRequest,
     GraphTranscriptToMinutesRequest, MeetingResponse, TranscriptResponse,
-    CallRecordsResponse, GraphMinutesResponse
+    CallRecordsResponse, GraphMinutesResponse, MeetingTranscriptsRequest,
+    TranscriptListResponse
 )
 from ..dependencies import get_current_active_user
 from ..modules.graph_client import graph_service
@@ -151,4 +152,25 @@ async def convert_graph_transcript_to_minutes(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"議事録生成中にエラーが発生しました: {str(e)}"
+        )
+
+
+@router.post("/meeting-transcripts", response_model=TranscriptListResponse)
+async def get_meeting_transcripts(
+    request: MeetingTranscriptsRequest,
+    current_user: User = Depends(get_current_active_user)
+):
+    try:
+        logger.info(f"会議トランスクリプト一覧取得開始: 会議 {request.meeting_id}")
+        
+        transcripts = await graph_service.get_meeting_transcripts_list(request.meeting_id)
+        
+        logger.info(f"会議トランスクリプト一覧取得完了: {len(transcripts)}件")
+        return TranscriptListResponse(transcripts=transcripts, count=len(transcripts))
+        
+    except Exception as e:
+        logger.error(f"会議トランスクリプト一覧取得エラー: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"トランスクリプト一覧の取得中にエラーが発生しました: {str(e)}"
         )

@@ -45,3 +45,12 @@ class GraphMinutesResponse(BaseModel):
     transcript_content: str
     generated_minutes: str
     created_at: datetime
+
+
+class MeetingTranscriptsRequest(BaseModel):
+    meeting_id: str
+
+
+class TranscriptListResponse(BaseModel):
+    transcripts: List[Dict[str, Any]]
+    count: int

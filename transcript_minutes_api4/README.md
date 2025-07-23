@@ -82,6 +82,7 @@ poetry run uvicorn app.main:app --reload
 ### Microsoft Graph
 
 - `POST /graph/meetings` - Teams会議一覧取得
+- `POST /graph/meeting-transcripts` - 会議のトランスクリプト一覧取得
 - `POST /graph/transcript` - 会議トランスクリプト取得
 - `POST /graph/call-records` - 通話記録取得
 - `POST /graph/transcript-to-minutes` - Graphトランスクリプトから議事録生成
@@ -134,6 +135,17 @@ curl -X POST "http://localhost:8000/graph/meetings" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "user@company.com"
+  }'
+```
+
+### 5. 会議のトランスクリプト一覧取得
+
+```bash
+curl -X POST "http://localhost:8000/graph/meeting-transcripts" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "meeting_id": "meeting_id_here"
   }'
 ```
 

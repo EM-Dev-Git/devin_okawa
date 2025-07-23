@@ -10,3 +10,26 @@ Traceback (most recent call last):
               ^^^^^^^^^^^^^^^^^
 AttributeError: module 'bcrypt' has no attribute '__about__'
 [2025-07-23 06:30:10] [INFO] [app.routers.auth] ユーザー登録成功: testuser
+[2025-07-23 06:35:29] [INFO] [app.main] アプリケーション開始
+[2025-07-23 06:35:29] [INFO] [app.main] データベーステーブル作成完了
+[2025-07-23 06:35:42] [INFO] [app.main] ルートエンドポイントアクセス
+[2025-07-23 06:36:37] [INFO] [app.routers.auth] ユーザー登録開始: testuser
+[2025-07-23 06:36:37] [WARNING] [app.routers.auth] ユーザー登録失敗 - 既存ユーザー: testuser
+[2025-07-23 06:36:58] [INFO] [app.routers.auth] ログイン試行: testuser
+[2025-07-23 06:36:58] [WARNING] [passlib.handlers.bcrypt] (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.cache/pypoetry/virtualenvs/transcript-minutes-api4-dUfVvqW1-py3.12/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+[2025-07-23 06:36:58] [INFO] [app.routers.auth] ログイン成功: testuser
+[2025-07-23 06:37:20] [INFO] [app.routers.graph] Teams会議一覧取得開始: ユーザー test@example.com
+[2025-07-23 06:37:20] [INFO] [app.modules.graph_client] ユーザー test@example.com のオンライン会議取得開始
+[2025-07-23 06:37:20] [ERROR] [app.modules.graph_client] Microsoft Graph認証情報の初期化エラー: Invalid tenant ID provided. You can locate your tenant ID by following the instructions here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names
+[2025-07-23 06:37:20] [ERROR] [app.modules.graph_client] Microsoft Graph アクセストークン取得エラー: Microsoft Graph認証情報が正しく設定されていません: Invalid tenant ID provided. You can locate your tenant ID by following the instructions here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names
+[2025-07-23 06:37:20] [ERROR] [app.modules.graph_client] オンライン会議取得エラー: 認証エラー: Microsoft Graph認証情報が正しく設定されていません: Invalid tenant ID provided. You can locate your tenant ID by following the instructions here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names
+[2025-07-23 06:37:20] [ERROR] [app.routers.graph] Teams会議一覧取得エラー: 会議取得エラー: 認証エラー: Microsoft Graph認証情報が正しく設定されていません: Invalid tenant ID provided. You can locate your tenant ID by following the instructions here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names
+[2025-07-23 06:40:13] [INFO] [app.main] アプリケーション終了
+[2025-07-23 06:40:17] [INFO] [app.main] アプリケーション開始
+[2025-07-23 06:40:17] [INFO] [app.main] データベーステーブル作成完了
+[2025-07-23 06:40:18] [INFO] [app.main] ルートエンドポイントアクセス

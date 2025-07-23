@@ -141,4 +141,33 @@ class GraphTranscriptService:
             raise Exception(f"通話記録取得エラー: {str(e)}")
 
 
+    async def get_meeting_transcripts_list(self, meeting_id: str) -> List[Dict[str, Any]]:
+        try:
+            logger.info(f"会議 {meeting_id} のトランスクリプト一覧取得開始")
+            
+            access_token = await self.get_access_token()
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json"
+            }
+
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/communications/onlineMeetings/{meeting_id}/transcripts",
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    logger.info(f"トランスクリプト一覧取得成功: {len(data.get('value', []))}件")
+                    return data.get('value', [])
+                else:
+                    logger.error(f"トランスクリプト一覧取得エラー: {response.status_code} - {response.text}")
+                    raise Exception(f"Graph API エラー: {response.status_code}")
+
+        except Exception as e:
+            logger.error(f"トランスクリプト一覧取得エラー: {str(e)}")
+            raise Exception(f"トランスクリプト一覧取得エラー: {str(e)}")
+
+
 graph_service = GraphTranscriptService()
