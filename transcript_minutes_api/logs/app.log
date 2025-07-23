@@ -1,0 +1,15 @@
+[2025-07-23 05:29:40] [INFO] [app.routers.users] ユーザー登録試行: test_user
+[2025-07-23 05:29:40] [WARNING] [passlib.handlers.bcrypt] (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/ubuntu/.cache/pypoetry/virtualenvs/transcript-minutes-api-rB4Tq9B4-py3.12/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+[2025-07-23 05:29:40] [INFO] [app.routers.users] ユーザー登録成功: test_user
+[2025-07-23 05:29:50] [INFO] [app.routers.auth] ログイン試行: test_user
+[2025-07-23 05:29:51] [INFO] [app.routers.auth] ログイン成功: test_user
+[2025-07-23 05:30:10] [INFO] [app.routers.users] ユーザー情報取得: test_user
+[2025-07-23 05:30:10] [INFO] [app.routers.minutes] 議事録生成開始: test_user - 週次進捗会議
+[2025-07-23 05:30:11] [INFO] [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+[2025-07-23 05:30:11] [ERROR] [app.routers.minutes] 議事録生成エラー: test_user - OpenAI API呼び出しエラー: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your-ope*******-key. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+[2025-07-23 05:30:26] [INFO] [app.routers.minutes] 議事録一覧取得: test_user
