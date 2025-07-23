@@ -10,3 +10,8 @@
 2025-07-23 08:00:47,206 - transcript_minutes_api2.app.routers.minutes - INFO - 議事録生成完了: 1
 2025-07-23 08:00:47,512 - transcript_minutes_api2.app.routers.minutes - INFO - 議事録一覧取得: testuser
 2025-07-23 08:00:47,514 - transcript_minutes_api2.app.routers.minutes - INFO - 議事録一覧取得完了: 1件
+2025-07-23 08:07:16,698 - transcript_minutes_api2.app.modules.graph_client - WARNING - Microsoft Graph認証情報が設定されていません
+2025-07-23 08:07:33,036 - transcript_minutes_api2.app.routers.auth - INFO - ログイン試行: testuser
+2025-07-23 08:07:33,345 - transcript_minutes_api2.app.routers.auth - INFO - ログイン成功: testuser
+2025-07-23 08:07:33,532 - transcript_minutes_api2.app.routers.graph - INFO - Teams会議一覧取得開始: testuser
+2025-07-23 08:07:33,533 - transcript_minutes_api2.app.routers.graph - ERROR - Teams会議一覧取得エラー: Microsoft Graph クライアントが初期化されていません

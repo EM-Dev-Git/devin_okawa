@@ -7,6 +7,7 @@
 - **JWT認証**: セキュアなユーザー認証システム
 - **ユーザー管理**: ユーザー登録・ログイン・プロフィール管理
 - **議事録生成**: OpenAI GPT-4を使用したトランスクリプト解析と議事録自動生成
+- **Microsoft Graph統合**: Teams会議のトランスクリプト自動取得
 - **データベース管理**: SQLiteを使用したデータ永続化
 - **ログ機能**: 包括的なログ記録とローテーション
 - **環境変数管理**: セキュアな設定管理
@@ -51,6 +52,11 @@ LOG_LEVEL=INFO
 LOG_FILE_PATH=./logs/app.log
 LOG_MAX_SIZE=10485760
 LOG_BACKUP_COUNT=5
+
+# Microsoft Graph設定
+GRAPH_TENANT_ID=your_tenant_id_here
+GRAPH_CLIENT_ID=your_client_id_here
+GRAPH_CLIENT_SECRET=your_client_secret_here
 ```
 
 ### 3. サーバーの起動
@@ -80,6 +86,13 @@ poetry run uvicorn app.main:app --reload
 - `GET /minutes/` - ユーザーの議事録一覧取得
 - `GET /minutes/{id}` - 特定の議事録取得
 - `DELETE /minutes/{id}` - 議事録削除
+
+### Microsoft Graph
+
+- `GET /graph/meetings` - Teams会議一覧取得
+- `GET /graph/meetings/{meeting_id}/transcript` - 会議トランスクリプト取得
+- `GET /graph/meetings/{meeting_id}/transcripts` - 会議トランスクリプト一覧取得
+- `POST /graph/meetings/{meeting_id}/generate-minutes` - Graph会議から議事録生成
 
 ### その他
 
@@ -145,17 +158,20 @@ transcript_minutes_api2/
 │   │   ├── __init__.py
 │   │   ├── auth.py           # 認証エンドポイント
 │   │   ├── users.py          # ユーザー管理エンドポイント
-│   │   └── minutes.py        # 議事録生成エンドポイント
+│   │   ├── minutes.py        # 議事録生成エンドポイント
+│   │   └── graph.py          # Microsoft Graph エンドポイント
 │   ├── schemas/               # Pydanticスキーマ
 │   │   ├── __init__.py
 │   │   ├── auth.py           # 認証スキーマ
 │   │   ├── users.py          # ユーザースキーマ
-│   │   └── minutes.py        # 議事録スキーマ
+│   │   ├── minutes.py        # 議事録スキーマ
+│   │   └── graph.py          # Microsoft Graph スキーマ
 │   └── modules/               # ビジネスロジック
 │       ├── __init__.py
 │       ├── auth.py           # 認証処理
 │       ├── transcript_processor.py  # トランスクリプト処理
 │       ├── minutes_formatter.py     # 議事録フォーマット
+│       ├── graph_client.py   # Microsoft Graph クライアント
 │       └── logger.py         # ログ設定
 ├── logs/                      # ログファイル
 ├── .env                       # 環境変数

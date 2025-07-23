@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routers import auth, users, minutes
+from .routers import auth, users, minutes, graph
 from .modules.logger import setup_logger
 from .config import settings
 
@@ -26,6 +26,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(minutes.router)
+app.include_router(graph.router)
 
 
 @app.get("/")
