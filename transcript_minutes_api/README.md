@@ -6,6 +6,7 @@
 
 - JWT認証によるユーザー管理
 - OpenAI APIを使用した議事録自動生成
+- Microsoft Graph SDK統合によるTeams会議トランスクリプト取得
 - SQLiteデータベースでのデータ永続化
 - 構造化されたログ出力
 - RESTful API設計
@@ -21,11 +22,22 @@ poetry install
 
 ### 2. 環境変数の設定
 
-`.env`ファイルを編集して、OpenAI APIキーを設定してください：
+`.env`ファイルを編集して、必要なAPIキーを設定してください：
 
 ```env
+# OpenAI API
 OPENAI_API_KEY=your-actual-openai-api-key
+
+# Microsoft Graph API
+MICROSOFT_CLIENT_ID=your-client-id
+MICROSOFT_CLIENT_SECRET=your-client-secret
+MICROSOFT_TENANT_ID=your-tenant-id
 ```
+
+Microsoft Graph APIを使用するには、Azure Active Directoryでアプリケーションを登録し、以下の権限を設定してください：
+- `OnlineMeetings.Read`
+- `CallRecords.Read.All`
+- `User.Read`
 
 ### 3. データベースの初期化
 
@@ -68,6 +80,13 @@ poetry run uvicorn app.main:app --reload
 - `GET /minutes/` - 議事録一覧取得
 - `GET /minutes/{id}` - 特定の議事録取得
 - `DELETE /minutes/{id}` - 議事録削除
+
+### Microsoft Graph統合
+
+- `GET /graph/meetings?user_id={user_id}&limit={limit}` - Microsoft Teams会議一覧取得
+- `POST /graph/transcript` - 特定会議のトランスクリプト取得
+- `GET /graph/call-records?user_id={user_id}&limit={limit}` - 通話記録一覧取得
+- `POST /graph/transcript-to-minutes` - Graph経由でトランスクリプトから議事録生成
 
 ## 使用例
 
@@ -112,6 +131,25 @@ curl -X POST "http://localhost:8000/minutes/generate" \
   }'
 ```
 
+### 4. Microsoft Graph - 会議一覧取得
+
+```bash
+curl -X GET "http://localhost:8000/graph/meetings?user_id=user@company.com&limit=10" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+### 5. Microsoft Graph - トランスクリプト取得
+
+```bash
+curl -X POST "http://localhost:8000/graph/transcript" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "user_id": "user@company.com",
+    "meeting_id": "meeting-id-from-teams"
+  }'
+```
+
 ## ディレクトリ構造
 
 ```
@@ -125,16 +163,19 @@ transcript_minutes_api/
 │   ├── routers/               # APIルーター
 │   │   ├── auth.py            # 認証関連エンドポイント
 │   │   ├── minutes.py         # 議事録生成エンドポイント
-│   │   └── users.py           # ユーザー管理エンドポイント
+│   │   ├── users.py           # ユーザー管理エンドポイント
+│   │   └── graph.py           # Microsoft Graph統合エンドポイント
 │   ├── modules/               # ビジネスロジック
 │   │   ├── auth.py            # 認証ロジック
 │   │   ├── transcript_processor.py  # トランスクリプト処理
 │   │   ├── minutes_formatter.py     # 議事録フォーマット
+│   │   ├── graph_client.py    # Microsoft Graph クライアント
 │   │   └── logger.py          # ログ管理
 │   └── schemas/               # Pydanticスキーマ
 │       ├── auth.py            # 認証関連スキーマ
 │       ├── minutes.py         # 議事録関連スキーマ
-│       └── users.py           # ユーザー関連スキーマ
+│       ├── users.py           # ユーザー関連スキーマ
+│       └── graph.py           # Microsoft Graph関連スキーマ
 ├── logs/                      # ログファイル
 ├── .env                       # 環境変数
 ├── pyproject.toml            # 依存関係
@@ -149,6 +190,8 @@ transcript_minutes_api/
 - **python-jose**: JWT処理
 - **passlib**: パスワードハッシュ化
 - **OpenAI**: 議事録生成AI
+- **Microsoft Graph SDK**: Teams会議データ取得
+- **Azure Identity**: Microsoft認証
 - **Pydantic**: データ検証
 
 ## ログ
