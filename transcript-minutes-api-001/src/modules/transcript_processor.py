@@ -1,6 +1,6 @@
-from .azure_openai_client import AzureOpenAIClient
-from ..schemas.transcript import TranscriptRequest
-from ..schemas.minutes import MinutesResponse
+from src.modules.azure_openai_client import AzureOpenAIClient
+from src.schemas.transcript import TranscriptRequest
+from src.schemas.minutes import MinutesResponse
 import uuid
 from datetime import datetime
 import logging

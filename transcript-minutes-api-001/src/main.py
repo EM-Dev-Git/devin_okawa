@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from .routers import minutes
-from .modules.logger import setup_logger
+from src.routers import minutes
+from src.modules.logger import setup_logger
 import logging
 
 setup_logger()
