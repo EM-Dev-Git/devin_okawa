@@ -9,6 +9,7 @@ class UserStore:
     def __init__(self, storage_file: str = "users.json"):
         self.storage_file = storage_file
         self.refresh_tokens: Dict[str, str] = {}
+        self.blacklisted_tokens: Dict[str, str] = {}
         self._load_users()
     
     def _load_users(self):
@@ -18,17 +19,21 @@ class UserStore:
                     data = json.load(f)
                     self.users = {k: UserInDB(**v) for k, v in data.get('users', {}).items()}
                     self.refresh_tokens = data.get('refresh_tokens', {})
+                    self.blacklisted_tokens = data.get('blacklisted_tokens', {})
             except (json.JSONDecodeError, KeyError):
                 self.users = {}
                 self.refresh_tokens = {}
+                self.blacklisted_tokens = {}
         else:
             self.users = {}
             self.refresh_tokens = {}
+            self.blacklisted_tokens = {}
     
     def _save_users(self):
         data = {
             'users': {k: v.dict() for k, v in self.users.items()},
-            'refresh_tokens': self.refresh_tokens
+            'refresh_tokens': self.refresh_tokens,
+            'blacklisted_tokens': self.blacklisted_tokens
         }
         with open(self.storage_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2, default=str)
@@ -71,5 +76,12 @@ class UserStore:
         for token in tokens_to_remove:
             del self.refresh_tokens[token]
         self._save_users()
+    
+    def blacklist_access_token(self, access_token: str):
+        self.blacklisted_tokens[access_token] = datetime.utcnow().isoformat()
+        self._save_users()
+    
+    def is_token_blacklisted(self, access_token: str) -> bool:
+        return access_token in self.blacklisted_tokens
 
 user_store = UserStore()
