@@ -1,5 +1,5 @@
 from openai import AzureOpenAI
-from config import settings
+from src.config import settings
 import logging
 
 class AzureOpenAIClient:
