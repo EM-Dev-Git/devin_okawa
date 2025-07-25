@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Test script to verify import resolution after fixes"""
+"""Test script to verify import resolution after directory restructuring"""
 
 import sys
 import os
 
 def test_imports():
-    """Test importing src modules after fixing import statements"""
+    """Test importing src modules after moving to root level"""
     print(f"Current working directory: {os.getcwd()}")
     print(f"Python path: {sys.path[:3]}...")
     
-    print("\n=== Testing imports after fixing import statements ===")
+    print("\n=== Testing imports after directory restructuring ===")
     
     try:
         import src.main
