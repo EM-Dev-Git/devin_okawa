@@ -47,6 +47,9 @@ def create_refresh_token(username: str, remember_me: bool = False) -> str:
 
 def verify_token(token: str) -> Optional[TokenData]:
     try:
+        if user_store.is_token_blacklisted(token):
+            return None
+            
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
         username: str = payload.get("sub")
         if username is None:

@@ -1,6 +1,6 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from src.schemas.auth import UserCreate, UserResponse, Token, LoginRequest, RefreshTokenRequest
 from src.modules.auth import (
     authenticate_user, 
@@ -17,6 +17,7 @@ from src.config import settings
 import logging
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
+security = HTTPBearer()
 logger = logging.getLogger(__name__)
 
 @router.post("/register", response_model=UserResponse)
@@ -83,14 +84,24 @@ async def refresh_token(refresh_data: RefreshTokenRequest):
 @router.post("/logout")
 async def logout(
     refresh_data: RefreshTokenRequest,
-    current_user: UserResponse = Depends(get_current_active_user)
+    current_user: UserResponse = Depends(get_current_active_user),
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
+    access_token = credentials.credentials
+    user_store.blacklist_access_token(access_token)
+    
     revoke_refresh_token(refresh_data.refresh_token)
     logger.info(f"User logged out: {current_user.username}")
     return {"message": "Successfully logged out"}
 
 @router.post("/logout-all")
-async def logout_all_devices(current_user: UserResponse = Depends(get_current_active_user)):
+async def logout_all_devices(
+    current_user: UserResponse = Depends(get_current_active_user),
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    access_token = credentials.credentials
+    user_store.blacklist_access_token(access_token)
+    
     revoke_all_user_tokens(current_user.username)
     logger.info(f"All tokens revoked for user: {current_user.username}")
     return {"message": "Successfully logged out from all devices"}
