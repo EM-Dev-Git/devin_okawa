@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from src.routers import minutes
+from fastapi.middleware.cors import CORSMiddleware
+from src.routers import minutes, auth
 from src.modules.logger import setup_logger
 import logging
 
@@ -8,10 +9,19 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="議事録生成API",
-    description="Azure OpenAIを使用してトランスクリプトから議事録を生成するAPI",
+    description="Azure OpenAIを使用してトランスクリプトから議事録を生成するAPI with OAuth2 authentication",
     version="1.0.0"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router)
 app.include_router(minutes.router)
 
 @app.get("/")
